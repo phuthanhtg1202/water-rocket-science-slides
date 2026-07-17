@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tên lửa khí nén & nước — Scientific Presentation</title>
+  <style>
+    :root {
+      --navy: #061629;
+      --navy-2: #0a2944;
+      --cyan: #35d5ff;
+      --teal: #19b6b2;
+      --orange: #ff8a2b;
+      --cream: #f3f8f8;
+      --muted: #adcad4;
+      --danger: #ff5d5d;
+      --safe: #75e7bd;
+      --line: rgba(173, 202, 212, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      background: #020b15;
+      color: var(--cream);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    }
+
+    button { font: inherit; }
+    .deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: clamp(28px, 4.2vw, 76px) clamp(34px, 6vw, 110px) clamp(30px, 4vw, 68px);
+      background:
+        radial-gradient(circle at 85% 18%, rgba(25,182,178,.16), transparent 28%),
+        linear-gradient(135deg, var(--navy), #071f36 65%, #082941);
+      opacity: 0;
+      transform: translateX(4%);
+      pointer-events: none;
+      transition: opacity .34s ease, transform .34s ease;
+    }
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; z-index: 2; }
+    .slide.exit { opacity: 0; transform: translateX(-4%); }
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, #000, transparent 75%);
+    }
+
+    header, .content, footer { position: relative; z-index: 1; }
+    header { display: flex; align-items: flex-start; justify-content: space-between; gap: 28px; }
+    .eyebrow {
+      color: var(--cyan);
+      font-size: clamp(.72rem, 1vw, 1rem);
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(3.25rem, 7.4vw, 8.1rem); line-height: .93; letter-spacing: -.055em; max-width: 1100px; margin-bottom: 1.3rem; }
+    h2 { font-size: clamp(2.15rem, 4.2vw, 4.75rem); line-height: 1.02; letter-spacing: -.04em; margin-bottom: .8rem; max-width: 1150px; }
+    h3 { font-size: clamp(1.25rem, 2vw, 2.1rem); line-height: 1.1; margin-bottom: .6rem; }
+    p, li, td, th { font-size: clamp(1rem, 1.45vw, 1.62rem); line-height: 1.42; }
+    .lede { font-size: clamp(1.25rem, 2.25vw, 2.4rem); line-height: 1.34; max-width: 920px; color: #d8ebef; }
+    .muted { color: var(--muted); }
+    .accent { color: var(--cyan); }
+    .orange { color: var(--orange); }
+    .safe { color: var(--safe); }
+    .danger { color: var(--danger); }
+
+    .content { min-height: 0; align-self: stretch; display: flex; align-items: center; }
+    .grid-2 { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.14fr); gap: clamp(28px, 5vw, 82px); align-items: center; }
+    .grid-2.equal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.6vw, 42px); }
+    .stack { display: grid; gap: clamp(14px, 1.5vw, 24px); }
+    .hero-copy { align-self: center; max-width: 1050px; }
+
+    .visual {
+      position: relative;
+      margin: 0;
+      width: 100%;
+      height: min(60vh, 650px);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.12);
+      background: #071a2b;
+    }
+    .visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .visual.contain img { object-fit: contain; }
+    .visual::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); pointer-events: none; }
+    .caption { position: absolute; left: 18px; bottom: 18px; background: rgba(2,11,21,.78); backdrop-filter: blur(10px); padding: 10px 14px; border-radius: 10px; color: #d7edf3; font-size: clamp(.78rem, 1vw, 1rem); }
+
+    .step-no {
+      display: inline-grid; place-items: center;
+      width: clamp(54px, 5vw, 82px); aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--orange); color: #17100a;
+      font-size: clamp(1.6rem, 2.8vw, 3rem); font-weight: 900;
+      box-shadow: 0 0 0 8px rgba(255,138,43,.12);
+      flex: 0 0 auto;
+    }
+    .step-heading { display: flex; gap: 22px; align-items: center; margin-bottom: 1.2rem; }
+    .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: .68rem; }
+    .checklist li { position: relative; padding-left: 1.65em; }
+    .checklist li::before { content: "✓"; position: absolute; left: 0; color: var(--safe); font-weight: 900; }
+    .bullets { margin: 0; padding-left: 1.15em; display: grid; gap: .65rem; }
+    .number-list { list-style: none; padding: 0; margin: 0; counter-reset: item; display: grid; gap: 1rem; }
+    .number-list li { counter-increment: item; padding-left: 2.3em; position: relative; }
+    .number-list li::before { content: counter(item); position: absolute; left: 0; top: -.08em; width: 1.55em; height: 1.55em; display: grid; place-items: center; border-radius: 50%; color: var(--navy); background: var(--cyan); font-weight: 900; }
+
+    .card {
+      padding: clamp(18px, 2.2vw, 34px);
+      border-top: 3px solid var(--cyan);
+      background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+      border-radius: 0 0 18px 18px;
+      min-height: 100%;
+    }
+    .card.orange-card { border-top-color: var(--orange); }
+    .card.safe-card { border-top-color: var(--safe); }
+    .card p:last-child { margin-bottom: 0; }
+    .icon { font-size: clamp(2rem, 3vw, 3.4rem); display: block; margin-bottom: .75rem; }
+
+    .warning {
+      border-left: 6px solid var(--danger);
+      background: rgba(255,93,93,.11);
+      padding: 16px 20px;
+      border-radius: 0 14px 14px 0;
+      margin-top: 1.2rem;
+    }
+    .tip {
+      border-left: 6px solid var(--cyan);
+      background: rgba(53,213,255,.1);
+      padding: 16px 20px;
+      border-radius: 0 14px 14px 0;
+      margin-top: 1.2rem;
+    }
+    .warning p, .tip p { margin: 0; }
+
+    .equation {
+      font-family: "Cambria Math", Georgia, serif;
+      font-size: clamp(2.2rem, 4.5vw, 5rem);
+      color: var(--cyan);
+      letter-spacing: -.03em;
+      margin: .5rem 0 1rem;
+    }
+    .arrow-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 18px; align-items: center; width: 100%; }
+    .flow-node { text-align: center; padding: 26px 18px; border-bottom: 3px solid var(--teal); background: rgba(255,255,255,.055); }
+    .flow-arrow { color: var(--orange); font-size: clamp(2rem, 4vw, 4rem); font-weight: 900; }
+
+    table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,.035); }
+    th, td { padding: clamp(10px, 1.2vw, 18px); border-bottom: 1px solid var(--line); text-align: center; }
+    th { color: var(--cyan); font-size: clamp(.82rem, 1.15vw, 1.22rem); text-transform: uppercase; letter-spacing: .06em; }
+    td:first-child, th:first-child { text-align: left; }
+    .blank { color: rgba(255,255,255,.24); letter-spacing: .14em; }
+
+    .big-quote { font-size: clamp(2rem, 4.2vw, 4.8rem); line-height: 1.15; max-width: 1200px; letter-spacing: -.035em; }
+    .thin-rule { width: min(220px, 28vw); height: 5px; background: linear-gradient(90deg, var(--orange), var(--cyan)); margin: 1.4rem 0 2rem; border-radius: 99px; }
+    .micro { font-size: clamp(.72rem, .9vw, .92rem); color: var(--muted); line-height: 1.3; }
+    .tag { display: inline-block; padding: 8px 12px; margin: 5px 7px 5px 0; border: 1px solid rgba(53,213,255,.4); color: #dff8ff; border-radius: 999px; font-size: clamp(.75rem, .95vw, 1rem); }
+
+    footer { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: clamp(.66rem, .82vw, .88rem); letter-spacing: .04em; text-transform: uppercase; }
+    .footer-mark { display: flex; gap: 10px; align-items: center; }
+    .footer-mark::before { content: ""; width: 22px; height: 4px; background: var(--orange); border-radius: 99px; }
+    .slide-number { font-variant-numeric: tabular-nums; }
+
+    .nav {
+      position: fixed; right: 18px; bottom: 16px; z-index: 30;
+      display: flex; gap: 8px; padding: 8px;
+      border: 1px solid rgba(255,255,255,.12); border-radius: 14px;
+      background: rgba(2,11,21,.65); backdrop-filter: blur(12px);
+      opacity: .2; transition: opacity .2s;
+    }
+    .nav:hover, .nav:focus-within { opacity: 1; }
+    .nav button { width: 40px; height: 38px; border: 0; border-radius: 9px; background: rgba(255,255,255,.09); color: white; cursor: pointer; }
+    .nav button:hover { background: var(--teal); color: var(--navy); }
+    .progress { position: fixed; left: 0; bottom: 0; z-index: 40; height: 5px; width: 100%; background: rgba(255,255,255,.08); }
+    .progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--orange), var(--cyan)); transition: width .3s ease; }
+    .help { position: fixed; left: 18px; bottom: 16px; z-index: 30; color: rgba(255,255,255,.48); font-size: 12px; }
+    .notes { display: none; }
+
+    @media (max-width: 900px), (max-aspect-ratio: 1/1) {
+      .slide { padding: 30px 28px 52px; }
+      .grid-2, .grid-2.equal { grid-template-columns: 1fr; gap: 22px; }
+      .grid-3 { grid-template-columns: 1fr; gap: 12px; }
+      .visual { height: 40vh; }
+      .card { min-height: auto; }
+      .arrow-flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); justify-self: center; line-height: .5; }
+      .help { display: none; }
+    }
+    @media print {
+      html, body { overflow: visible; background: white; }
+      .deck { height: auto; overflow: visible; }
+      .slide { position: relative; width: 13.333in; height: 7.5in; opacity: 1 !important; transform: none !important; page-break-after: always; pointer-events: auto; }
+      .nav, .progress, .help { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck" aria-live="polite">
+
+    <section class="slide active" data-title="Tên lửa khí nén & nước">
+      <header><div class="eyebrow">Scientific Presentation • Vật lý ứng dụng</div></header>
+      <div class="content hero-copy">
+        <div>
+          <h1>Tên lửa<br><span class="accent">khí nén</span> <span class="orange">& nước</span></h1>
+          <div class="thin-rule"></div>
+          <p class="lede">Một chai nhựa, một dòng nước phụt xuống — và ba ý tưởng lớn cùng cất cánh: <b>áp suất</b>, <b>phản lực</b>, <b>bảo toàn động lượng</b>.</p>
+          <div style="margin-top:1.4rem"><span class="tag">Chế tạo an toàn</span><span class="tag">6 bước có hình</span><span class="tag">Giải thích khoa học</span></div>
+        </div>
+      </div>
+      <footer><span class="footer-mark">Tên lửa nước</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Câu hỏi trung tâm">
+      <header><div><div class="eyebrow">Câu hỏi trung tâm</div><h2>Không có lửa, vì sao tên lửa vẫn bay?</h2></div></header>
+      <div class="content">
+        <div class="grid-3">
+          <article class="card"><span class="icon">💨</span><h3>Khí nén tích trữ năng lượng</h3><p class="muted">Không khí bị nén có áp suất cao hơn môi trường xung quanh.</p></article>
+          <article class="card orange-card"><span class="icon">💧</span><h3>Nước mang động lượng đi xuống</h3><p class="muted">Khi cửa phóng mở, khí giãn ra và ép nước thoát nhanh qua cổ chai.</p></article>
+          <article class="card safe-card"><span class="icon">🚀</span><h3>Chai nhận phản lực đi lên</h3><p class="muted">Lực đẩy thắng trọng lượng trong thời gian ngắn, tên lửa tăng tốc.</p></article>
+        </div>
+      </div>
+      <footer><span class="footer-mark">Câu hỏi → cơ chế → bằng chứng</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="An toàn là điều kiện số 1">
+      <header><div><div class="eyebrow danger">An toàn trước khi khoa học bắt đầu</div><h2>Đây là thí nghiệm <span class="danger">bình chịu áp</span></h2></div></header>
+      <div class="content">
+        <div class="grid-2 equal">
+          <div class="stack">
+            <article class="card safe-card"><h3>Luôn làm</h3><ul class="checklist"><li>Có người lớn hoặc giáo viên giám sát.</li><li>Phóng ngoài trời, khoảng trống rộng, đeo kính bảo hộ.</li><li>Dùng bệ phóng tên lửa nước có định mức, đồng hồ áp và dây nhả từ xa.</li><li>Tuân thủ đúng giới hạn của nhà sản xuất bệ phóng.</li></ul></article>
+          </div>
+          <div class="stack">
+            <article class="card orange-card"><h3>Tuyệt đối không</h3><ul class="bullets"><li>Không dùng chai xước, móp, giòn, phơi nắng lâu hoặc đã sửa chữa.</li><li>Không đứng trên, cúi sát hay chạm tên lửa khi đang có áp suất.</li><li>Không phóng về phía người, nhà, xe, đường điện hoặc vật nuôi.</li><li><b>Không dùng nước nóng, hơi nước nóng, lửa hay khí dễ cháy.</b></li></ul></article>
+            <div class="warning"><p><b>“Hơi” trong bài này là khí nén ở nhiệt độ thường</b>, không phải hơi nước nóng.</p></div>
+          </div>
+        </div>
+      </div>
+      <footer><span class="footer-mark">Giảm rủi ro bằng khoảng cách và thiết bị đúng chuẩn</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Dụng cụ cần thiết">
+      <header><div><div class="eyebrow">Chuẩn bị</div><h2>Một hệ phóng tốt quan trọng hơn một chai đẹp</h2></div></header>
+      <div class="content">
+        <div class="grid-2">
+          <div>
+            <ul class="checklist">
+              <li>1 chai PET nước ngọt 1–1,5 L còn nguyên vẹn</li>
+              <li>3 cánh nhẹ giống nhau; băng keo chắc; chóp mũi mềm</li>
+              <li>Nước mát, ca đong và phễu</li>
+              <li>Kính bảo hộ cho người thao tác</li>
+              <li>Bơm xe có đồng hồ áp suất</li>
+              <li>Bệ phóng tên lửa nước định mức + dây nhả từ xa</li>
+              <li>Thước dây, điện thoại quay chậm, phiếu ghi kết quả</li>
+            </ul>
+            <div class="tip"><p><b>Chai là buồng áp suất:</b> chỉ dán cánh bên ngoài; không đục, cắt hay làm mỏng thân chai.</p></div>
+          </div>
+          <figure class="visual"><img src="water-rocket-assets/01-materials.png" alt="Bộ dụng cụ tên lửa nước gồm chai PET, cánh, chóp, kính, ca nước, bơm và bệ phóng"><figcaption class="caption">Dụng cụ được sắp xếp trước khi ra bãi phóng</figcaption></figure>
+        </div>
+      </div>
+      <footer><span class="footer-mark">Dụng cụ</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bước 1 — Tạo thân tên lửa">
+      <header><div class="step-heading"><span class="step-no">1</span><div><div class="eyebrow">Chế tạo</div><h2>Giữ chai nguyên vẹn, chỉ thêm cánh và chóp</h2></div></div></header>
+      <div class="content"><div class="grid-2">
+        <div><ol class="number-list"><li>Rửa, làm khô và soi chai dưới ánh sáng; loại bỏ chai có vết trắng, xước sâu hoặc móp.</li><li>Đánh dấu 3 vị trí cách đều quanh thân; dán 3 cánh cùng kích thước, song song trục chai.</li><li>Gắn chóp mũi bằng giấy xốp hoặc bìa nhẹ ở đáy chai. Chóp phải mềm và dễ tháo.</li></ol><div class="tip"><p><b>Tại sao 3 cánh?</b> Ba điểm xác định một mặt phẳng, vừa nhẹ vừa tạo ổn định tốt khi các cánh cách nhau khoảng 120°.</p></div></div>
+        <figure class="visual"><img src="water-rocket-assets/02-build-body.png" alt="Người lớn đeo kính bảo hộ kiểm tra chai và gắn ba cánh cùng chóp mũi"><figcaption class="caption">Cổ chai sẽ hướng xuống khi phóng</figcaption></figure>
+      </div></div>
+      <footer><span class="footer-mark">Bước 1 • Thân & ổn định</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bước 2 — Nạp nước">
+      <header><div class="step-heading"><span class="step-no">2</span><div><div class="eyebrow">Nạp khối lượng phản lực</div><h2>Bắt đầu với khoảng <span class="accent">⅓ chai nước</span></h2></div></div></header>
+      <div class="content"><div class="grid-2">
+        <div><ul class="bullets"><li>Tháo chóp tạm thời nếu cần, đặt chai vững và dùng phễu rót nước mát.</li><li>Chừa khoảng ⅔ thể tích cho không khí: phần khí này sẽ bị nén và tích trữ năng lượng.</li><li>Lau khô cổ chai để bệ phóng khóa đúng cách.</li></ul><div class="tip"><p><b>⅓ là điểm khởi đầu, không phải “con số thần kỳ”.</b> Quá ít nước → ít khối lượng phản lực; quá nhiều nước → ít không khí nén và tên lửa nặng.</p></div></div>
+        <figure class="visual"><img src="water-rocket-assets/03-add-water.png" alt="Rót nước mát bằng phễu vào khoảng một phần ba chai tên lửa"><figcaption class="caption">Nước là khối lượng bị phụt; khí nén là “lò xo” năng lượng</figcaption></figure>
+      </div></div>
+      <footer><span class="footer-mark">Bước 2 • Nước + khoảng khí</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bước 3 — Lắp lên bệ">
+      <header><div class="step-heading"><span class="step-no">3</span><div><div class="eyebrow">Thiết lập hệ phóng</div><h2>Khóa chai theo đúng hướng dẫn của bệ phóng</h2></div></div></header>
+      <div class="content"><div class="grid-2">
+        <div><ol class="number-list"><li>Đặt bệ trên đất phẳng; neo/chèn chân theo hướng dẫn nhà sản xuất.</li><li>Lật tên lửa, lắp cổ chai vào khớp phóng và kiểm tra chốt khóa.</li><li>Nối ống bơm, đồng hồ áp và kéo dây nhả ra ngoài vùng an toàn.</li><li>Hướng tên lửa thẳng đứng; kiểm tra không có vật cản phía trên.</li></ol><div class="warning"><p>Chỉ người lớn lắp tên lửa. Khi đã nối bơm, không ai bước vào vùng phóng.</p></div></div>
+        <figure class="visual"><img src="water-rocket-assets/04-mount-launcher.png" alt="Người lớn lắp tên lửa nước lên bệ phóng ba chân ngoài trời và nối ống bơm"><figcaption class="caption">Bệ chắc + dây nhả xa = khoảng cách an toàn</figcaption></figure>
+      </div></div>
+      <footer><span class="footer-mark">Bước 3 • Bệ phóng</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bước 4 — Tạo áp suất">
+      <header><div class="step-heading"><span class="step-no">4</span><div><div class="eyebrow">Nén không khí</div><h2>Bơm từ xa — không vượt giới hạn thiết bị</h2></div></div></header>
+      <div class="content"><div class="grid-2">
+        <div><ul class="checklist"><li>Mọi người đứng sau ranh giới và đeo kính.</li><li>Người thao tác đứng ngoài vùng phóng, quan sát đồng hồ.</li><li>Bơm chậm, đều; chỉ đến mức nhà sản xuất bệ phóng cho phép.</li><li>Dừng ngay nếu có tiếng rò, chai phồng bất thường, bệ nghiêng hoặc ống tuột.</li></ul><div class="warning"><p><b>Không thử “cao hơn một chút”.</b> Năng lượng trong khí nén tăng cùng áp suất và có thể giải phóng đột ngột.</p></div></div>
+        <figure class="visual"><img src="water-rocket-assets/05-pressurize.png" alt="Người lớn bơm khí từ xa trong khi tên lửa đứng trên bệ và khán giả ở sau ranh giới"><figcaption class="caption">Không ai đứng trên đường bay hoặc cúi trên chai</figcaption></figure>
+      </div></div>
+      <footer><span class="footer-mark">Bước 4 • Áp suất có kiểm soát</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bước 5 — Phóng và đo">
+      <header><div class="step-heading"><span class="step-no">5</span><div><div class="eyebrow">Thực nghiệm</div><h2>Đếm ngược, nhả từ xa, ghi lại bằng chứng</h2></div></div></header>
+      <div class="content"><div class="grid-2">
+        <div><ol class="number-list"><li>Hô “Bãi phóng an toàn?” và chờ xác nhận từ người quan sát.</li><li>Đếm ngược 3–2–1; kéo dây nhả từ vị trí an toàn.</li><li>Quay video ngang, có vật chuẩn kích thước ở xa; một người đo thời gian bay.</li><li>Không chạy theo tên lửa. Chờ rơi và xác nhận hết áp suất trước khi thu hồi.</li></ol><div class="tip"><p>Dữ liệu tốt biến một màn phóng đẹp thành một <b>thí nghiệm có thể so sánh</b>.</p></div></div>
+        <figure class="visual"><img src="water-rocket-assets/06-launch.png" alt="Tên lửa chai PET bay lên cao, phụt một cột nước xuống từ bệ phóng ngoài trời"><figcaption class="caption">Thành phẩm: nước phụt xuống, tên lửa tăng tốc lên</figcaption></figure>
+      </div></div>
+      <footer><span class="footer-mark">Bước 5 • Phóng & đo</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bước 6 — Thu hồi và kiểm tra">
+      <header><div class="step-heading"><span class="step-no">6</span><div><div class="eyebrow">Hoàn tất chu trình</div><h2>Thành phẩm tốt phải bay ổn định <em>và</em> dùng lại an toàn</h2></div></div></header>
+      <div class="content"><div class="grid-2 equal">
+        <article class="card safe-card"><h3>Checklist thành phẩm</h3><ul class="checklist"><li>Ba cánh thẳng, chắc, đối xứng</li><li>Chóp mũi nhẹ và mềm</li><li>Thân chai không xước, móp hoặc rò</li><li>Cổ chai khớp đúng bệ phóng</li><li>Khối lượng trang trí nhỏ, cân hai bên</li></ul></article>
+        <article class="card orange-card"><h3>Sau mỗi lần phóng</h3><ul class="bullets"><li>Chờ tín hiệu “an toàn” từ người phụ trách.</li><li>Xả hết áp theo hướng dẫn bệ nếu lần phóng không nhả.</li><li>Thu hồi, lau khô, kiểm tra thân và cánh.</li><li>Loại bỏ chai ngay khi xuất hiện hư hại.</li><li>Ghi điều kiện gió, lượng nước và kết quả.</li></ul></article>
+      </div></div>
+      <footer><span class="footer-mark">Bước 6 • Thu hồi & tái kiểm tra</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Chuỗi chuyển hóa năng lượng">
+      <header><div><div class="eyebrow">Cơ chế</div><h2>Áp suất biến thành chuyển động qua 3 mắt xích</h2></div></header>
+      <div class="content">
+        <div class="arrow-flow">
+          <div class="flow-node"><span class="icon">💪</span><h3>Cơ bắp bơm</h3><p class="muted">Công cơ học</p></div><div class="flow-arrow">→</div>
+          <div class="flow-node"><span class="icon">🫧</span><h3>Khí bị nén</h3><p class="muted">Năng lượng tích trữ</p></div><div class="flow-arrow">→</div>
+          <div class="flow-node"><span class="icon">💦</span><h3>Nước phụt + chai bay</h3><p class="muted">Động năng</p></div>
+        </div>
+      </div>
+      <footer><span class="footer-mark">Năng lượng không tự sinh ra — nó chuyển dạng</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Định luật III Newton">
+      <header><div><div class="eyebrow">Vì sao bay?</div><h2>Hai lực bằng nhau, ngược chiều, tác dụng lên <span class="accent">hai vật khác nhau</span></h2></div></header>
+      <div class="content"><div class="grid-2">
+        <div><p class="equation">F<sub>chai→nước</sub> = −F<sub>nước→chai</sub></p><ul class="bullets"><li><b>Tác dụng:</b> chai và khí nén đẩy nước xuống.</li><li><b>Phản tác dụng:</b> nước đẩy chai lên với lực cùng độ lớn, ngược hướng.</li><li>Nếu lực đẩy hướng lên lớn hơn tổng trọng lực và lực cản, tên lửa tăng tốc lên.</li></ul><div class="tip"><p>Cặp lực Newton III <b>không triệt tiêu nhau</b>, vì chúng tác dụng lên hai vật khác nhau.</p></div></div>
+        <figure class="visual contain"><img src="water-rocket-assets/07-forces.png" alt="Hình cắt bổ tên lửa nước với dòng nước đi xuống và mũi tên phản lực đi lên"><figcaption class="caption">Cam: lực/chiều chuyển động chính • Xanh: nước</figcaption></figure>
+      </div></div>
+      <footer><span class="footer-mark">Newton III • Tác dụng — phản tác dụng</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bảo toàn động lượng">
+      <header><div><div class="eyebrow">Hiện tượng khoa học chung</div><h2>Phản lực là cách hệ giữ tổng động lượng gần như không đổi</h2></div></header>
+      <div class="content"><div class="grid-2 equal">
+        <div><p class="equation">p = mv</p><p class="lede">Nước nhận động lượng hướng xuống; tên lửa nhận động lượng hướng lên.</p><p class="muted">Trong khoảng thời gian phụt rất ngắn, ảnh hưởng của ngoại lực nhỏ hơn xung lực do dòng nước, nên bảo toàn động lượng giải thích trực tiếp cú tăng tốc.</p></div>
+        <div class="stack"><article class="card"><h3>Lực đẩy phụ thuộc dòng phụt</h3><p class="equation" style="font-size:clamp(2rem,3.5vw,3.8rem)">F ≈ ṁv<sub>e</sub></p><p class="muted">Dòng khối lượng lớn hơn (ṁ) hoặc tốc độ phụt cao hơn (vₑ) thường tạo lực đẩy lớn hơn.</p></article><article class="card orange-card"><h3>Nhưng tên lửa cũng nặng hơn</h3><p class="muted">Gia tốc tuân theo a = F/m. Thêm nước có thể tăng lực đẩy nhưng cũng tăng khối lượng — vì vậy cần thí nghiệm tìm điểm cân bằng.</p></article></div>
+      </div></div>
+      <footer><span class="footer-mark">Động lượng • Xung lực • Gia tốc</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Bốn giai đoạn chuyến bay">
+      <header><div><div class="eyebrow">Sau khi rời bệ</div><h2>Mỗi giai đoạn có một lực chi phối khác nhau</h2></div></header>
+      <div class="content"><div class="grid-2 equal">
+        <div class="stack">
+          <article class="card orange-card"><h3>1 • Phụt nước</h3><p class="muted">Lực đẩy lớn; khối lượng giảm nhanh; tên lửa tăng tốc.</p></article>
+          <article class="card"><h3>2 • Bay theo quán tính</h3><p class="muted">Nước đã hết; trọng lực và lực cản làm tốc độ giảm.</p></article>
+        </div>
+        <div class="stack">
+          <article class="card safe-card"><h3>3 • Đỉnh quỹ đạo</h3><p class="muted">Vận tốc thẳng đứng tức thời gần bằng 0, sau đó đổi chiều.</p></article>
+          <article class="card"><h3>4 • Rơi xuống</h3><p class="muted">Trọng lực kéo xuống; lực cản hạn chế tốc độ. Thu hồi sau khi rơi hẳn.</p></article>
+        </div>
+      </div></div>
+      <footer><span class="footer-mark">Lực đẩy → quán tính → trọng lực</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Thiết kế thí nghiệm">
+      <header><div><div class="eyebrow">Làm khoa học, không chỉ làm đồ chơi</div><h2>Lượng nước nào cho thời gian bay dài nhất?</h2></div></header>
+      <div class="content"><div class="grid-2">
+        <div><h3>Thiết kế công bằng</h3><ul class="checklist"><li>Biến độc lập: tỉ lệ nước ¼, ⅓, ½ chai</li><li>Biến phụ thuộc: thời gian bay hoặc độ cao từ video</li><li>Giữ nguyên: chai, cánh, bệ, góc, quy trình áp suất định mức</li><li>Chỉ thử khi gió yếu; thực hiện 3 lần mỗi mức</li></ul><div class="tip"><p><b>Dự đoán:</b> mức trung gian thường cân bằng tốt hơn giữa lượng nước phụt và thể tích khí nén — nhưng dữ liệu mới là câu trả lời.</p></div></div>
+        <div><table aria-label="Bảng ghi dữ liệu thí nghiệm lượng nước"><thead><tr><th>Nước</th><th>Lần 1</th><th>Lần 2</th><th>Lần 3</th><th>Trung bình</th></tr></thead><tbody><tr><td>¼ chai</td><td class="blank">___</td><td class="blank">___</td><td class="blank">___</td><td class="blank">___</td></tr><tr><td>⅓ chai</td><td class="blank">___</td><td class="blank">___</td><td class="blank">___</td><td class="blank">___</td></tr><tr><td>½ chai</td><td class="blank">___</td><td class="blank">___</td><td class="blank">___</td><td class="blank">___</td></tr></tbody></table><p class="micro" style="margin-top:1rem">Ghi đơn vị (giây hoặc mét), điều kiện gió và mọi lần thử bất thường.</p></div>
+      </div></div>
+      <footer><span class="footer-mark">Giả thuyết → kiểm soát biến → lặp lại → kết luận</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Ứng dụng trong đời sống">
+      <header><div><div class="eyebrow">Một nguyên lý — nhiều nơi xuất hiện</div><h2>Ta gặp phản lực mỗi ngày, chỉ là không gọi tên nó</h2></div></header>
+      <div class="content"><div class="grid-2">
+        <div><ul class="bullets"><li><b>Bóng bay:</b> khí thoát một phía, bóng chạy phía ngược lại.</li><li><b>Vòi phun quay:</b> tia nước đẩy tay phun xoay để tưới đều.</li><li><b>Bơi:</b> tay chân đẩy nước về sau, cơ thể tiến về trước.</li><li><b>Thuyền phản lực:</b> bơm nước ra sau để đẩy thuyền đi.</li></ul><p class="lede" style="font-size:clamp(1.15rem,1.7vw,1.8rem); margin-top:1.2rem">Hiểu phản lực giúp ta thiết kế <span class="accent">giao thông, tưới tiêu, thể thao</span> — và xử lý an toàn mọi hệ có áp suất.</p></div>
+        <figure class="visual"><img src="water-rocket-assets/08-applications.png" alt="Bóng bay, vòi tưới quay, người bơi và thuyền phản lực minh họa tác dụng phản tác dụng"><figcaption class="caption">Cùng một logic: đẩy vật chất về sau để tiến về trước</figcaption></figure>
+      </div></div>
+      <footer><span class="footer-mark">Từ sân trường đến công nghệ</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide" data-title="Kết luận">
+      <header><div class="eyebrow">Kết luận</div></header>
+      <div class="content">
+        <div>
+          <p class="big-quote">Tên lửa nước bay vì khí nén <span class="accent">đẩy nước xuống</span>, nước <span class="orange">đẩy chai lên</span>, và động lượng được trao đổi giữa hai phần của hệ.</p>
+          <div class="thin-rule"></div>
+          <div class="grid-3">
+            <div><h3>01 • An toàn</h3><p class="muted">Thiết bị định mức, khoảng cách, người lớn giám sát.</p></div>
+            <div><h3>02 • Khoa học</h3><p class="muted">Áp suất, Newton III, bảo toàn động lượng.</p></div>
+            <div><h3>03 • Tư duy</h3><p class="muted">Thay một biến, đo lặp lại, để dữ liệu trả lời.</p></div>
+          </div>
+          <p class="lede" style="margin-top:2rem">Câu hỏi cuối: Nếu muốn bay ổn định hơn, bạn sẽ thay đổi <b>cánh</b>, <b>lượng nước</b> hay <b>khối lượng chóp</b> — và sẽ kiểm chứng thế nào?</p>
+        </div>
+      </div>
+      <footer><span class="footer-mark">Quan sát • Giải thích • Kiểm chứng</span><span class="slide-number"></span></footer>
+    </section>
+  </main>
+
+  <div class="help">← → / Space để chuyển slide • F toàn màn hình • Home/End</div>
+  <nav class="nav" aria-label="Điều khiển slide">
+    <button id="prev" title="Slide trước" aria-label="Slide trước">←</button>
+    <button id="fullscreen" title="Toàn màn hình" aria-label="Toàn màn hình">⛶</button>
+    <button id="next" title="Slide sau" aria-label="Slide sau">→</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('.slide')];
+      const progress = document.getElementById('progressBar');
+      let index = Math.max(0, Math.min(slides.length - 1, Number(new URLSearchParams(location.search).get('slide') || 1) - 1));
+
+      slides.forEach((slide, i) => {
+        slide.querySelector('.slide-number').textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+      });
+
+      function show(next, push = true) {
+        next = Math.max(0, Math.min(slides.length - 1, next));
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === next);
+          slide.classList.toggle('exit', i < next);
+          slide.setAttribute('aria-hidden', i === next ? 'false' : 'true');
+        });
+        index = next;
+        progress.style.width = ((index + 1) / slides.length * 100) + '%';
+        document.title = slides[index].dataset.title + ' — Tên lửa nước';
+        if (push) history.replaceState(null, '', '?slide=' + (index + 1));
+      }
+
+      const next = () => show(index + 1);
+      const prev = () => show(index - 1);
+      document.getElementById('next').addEventListener('click', next);
+      document.getElementById('prev').addEventListener('click', prev);
+      document.getElementById('fullscreen').addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+        else document.exitFullscreen?.();
+      });
+      addEventListener('keydown', (e) => {
+        if (['ArrowRight', 'ArrowDown', 'PageDown', 'Enter', ' '].includes(e.key)) { e.preventDefault(); next(); }
+        if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+        if (e.key === 'Home') show(0);
+        if (e.key === 'End') show(slides.length - 1);
+        if (e.key.toLowerCase() === 'f') document.getElementById('fullscreen').click();
+      });
+      let touchX = 0;
+      addEventListener('touchstart', e => touchX = e.changedTouches[0].screenX, {passive:true});
+      addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].screenX - touchX;
+        if (Math.abs(dx) > 50) dx < 0 ? next() : prev();
+      }, {passive:true});
+      show(index, false);
+    })();
+  </script>
+</body>
+</html>
